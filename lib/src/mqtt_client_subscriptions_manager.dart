@@ -75,6 +75,14 @@ class SubscriptionsManager {
     return cn ??= createNewSubscription(topic, qos);
   }
 
+  void resubscribeAfterReconnect() {
+    var lastSubs = List<Subscription>.unmodifiable(subscriptions.values);
+    subscriptions.clear();
+    lastSubs.forEach((sub) {
+      registerSubscription(sub.topic.rawTopic, sub.qos);
+    });
+  }
+
   /// Gets a view on the existing observable, if the subscription
   /// already exists.
   Subscription tryGetExistingSubscription(String topic) {

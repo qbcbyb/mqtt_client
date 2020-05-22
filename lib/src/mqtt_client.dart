@@ -214,7 +214,7 @@ class MqttClient<T extends MqttConnectionHandlerBase<R, S>,
       connectionHandler.websocketProtocols = websocketProtocolString;
     }
     connectionHandler.onDisconnected = internalDisconnect;
-    connectionHandler.onConnected = onConnected;
+    connectionHandler.onConnected = internalConnected;
     connectionHandler.onAutoReconnect = onAutoReconnect;
     //
     publishingManager = PublishingManager(connectionHandler, clientEventBus);
@@ -362,6 +362,16 @@ class MqttClient<T extends MqttConnectionHandlerBase<R, S>,
     _connectionStatus.disconnectionOrigin = disconnectOrigin;
     if (onDisconnected != null) {
       onDisconnected();
+    }
+  }
+
+  @protected
+  void internalConnected() {
+    if (connectionHandler.autoReconnectInProgress) {
+      subscriptionsManager?.resubscribeAfterReconnect();
+    }
+    if (onConnected != null) {
+      onConnected();
     }
   }
 
