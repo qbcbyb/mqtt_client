@@ -17,7 +17,7 @@ abstract class ServerSocketWrapper<T> implements BaseConnection {
   static ServerSocketWrapper<WebSocket> newWebSocket(WebSocket socket) =>
       _WebSocketWrapper(socket);
 
-  StreamSubscription<Uint8List> listen(void Function(Uint8List event) onData,
+  StreamSubscription<dynamic> listen(void Function(dynamic event) onData,
       {Function onError, Function() onDone, bool cancelOnError});
 }
 
@@ -58,12 +58,10 @@ class _WebSocketWrapper extends ServerSocketWrapper<WebSocket> {
   }
 
   @override
-  StreamSubscription<Uint8List> listen(void Function(Uint8List event) onData,
+  StreamSubscription<dynamic> listen(void Function(dynamic event) onData,
       {Function onError, Function() onDone, bool cancelOnError}) {
-    return socket.listen(onData as void Function(dynamic event),
-        onError: onError,
-        onDone: onDone,
-        cancelOnError: cancelOnError) as StreamSubscription<Uint8List>;
+    return socket.listen(onData,
+        onError: onError, onDone: onDone, cancelOnError: cancelOnError);
   }
 }
 
@@ -98,15 +96,15 @@ class MqttServerConnection<T>
   }
 
   /// OnData listener callback
-  void _onData(Uint8List data) {
+  void _onData(dynamic data) {
     MqttLogger.log('MqttConnection::_onData');
     // Protect against 0 bytes but should never happen.
-    if (data is! List || data.isEmpty) {
+    if (data is! List || (data as List).isEmpty) {
       MqttLogger.log('MqttServerConnection::_ondata - Error - 0 byte message');
       return;
     }
 
-    messageStream.addAll(data);
+    messageStream.addAll(data as List<int>);
 
     while (messageStream.isMessageAvailable()) {
       var messageIsValid = true;
