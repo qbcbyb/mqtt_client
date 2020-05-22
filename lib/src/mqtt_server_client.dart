@@ -7,7 +7,10 @@
 
 part of mqtt_server_client;
 
-class MqttServerClient extends MqttClient {
+class MqttServerClient extends MqttClient<
+    SynchronousMqttServerConnectionHandler,
+    MqttServerConnection<dynamic>,
+    ServerSocketWrapper<dynamic>> {
   /// Initializes a new instance of the MqttServerClient class using the
   /// default Mqtt Port.
   /// The server hostname to connect to
@@ -27,7 +30,7 @@ class MqttServerClient extends MqttClient {
   SecurityContext securityContext = SecurityContext.defaultContext;
 
   /// Callback function to handle bad certificate. if true, ignore the error.
-  bool Function(X509Certificate certificate) onBadCertificate;
+  bool Function(dynamic) onBadCertificate;
 
   /// If set use a websocket connection, otherwise use the default TCP one
   bool useWebSocket = false;

@@ -8,3 +8,6 @@ include: package:pedantic/analysis_options.yaml
 analyzer:
   exclude:
     - test/issues/**
+  strong-mode:
+    implicit-casts: false
+    implicit-dynamic: false

@@ -21,7 +21,8 @@ typedef AutoReconnectCallback = void Function();
 /// either a [MqttClientServer] class or an [MqttBrowserClient] as needed.
 /// This class now provides common functionality between server side
 /// and web based clients.
-class MqttClient {
+class MqttClient<T extends MqttConnectionHandlerBase<R, S>,
+    R extends MqttConnectionBase<S>, S extends BaseConnection> {
   /// Initializes a new instance of the MqttClient class using the
   /// default Mqtt Port.
   /// The server hostname to connect to
@@ -63,7 +64,7 @@ class MqttClient {
 
   /// The Handler that is managing the connection to the remote server.
   @protected
-  dynamic connectionHandler;
+  T connectionHandler;
 
   @protected
   List<String> websocketProtocolString;

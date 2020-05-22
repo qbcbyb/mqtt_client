@@ -8,7 +8,7 @@
 part of mqtt_server_client;
 
 /// The MQTT normal(insecure TCP) server connection class
-class MqttServerNormalConnection extends MqttServerConnection {
+class MqttServerNormalConnection extends MqttServerConnection<Socket> {
   /// Default constructor
   MqttServerNormalConnection(events.EventBus eventBus) : super(eventBus);
 
@@ -25,8 +25,8 @@ class MqttServerNormalConnection extends MqttServerConnection {
     final completer = Completer<MqttClientConnectionStatus>();
     try {
       // Connect and save the socket.
-      Socket.connect(server, port).then((dynamic socket) {
-        client = socket;
+      Socket.connect(server, port).then((Socket socket) {
+        client = ServerSocketWrapper.newSocket<Socket>(socket);
         readWrapper = ReadWrapper();
         messageStream = MqttByteBuffer(typed.Uint8Buffer());
         _startListening();

@@ -9,7 +9,8 @@ part of mqtt_browser_client;
 
 ///  This class provides specific connection functionality
 ///  for browser based connection handler implementations.
-abstract class MqttBrowserConnectionHandler extends MqttConnectionHandlerBase {
+abstract class MqttBrowserConnectionHandler<T extends MqttConnectionBase<R>,
+    R extends BaseConnection> extends MqttConnectionHandlerBase<T, R> {
   /// Initializes a new instance of the [MqttBrowserConnectionHandler] class.
   MqttBrowserConnectionHandler();
 }

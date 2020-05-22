@@ -143,7 +143,7 @@ class SubscriptionsManager {
   /// Marks the sub as confirmed in the subs storage.
   /// Returns true on successful subscription, false on fail.
   bool confirmSubscription(MqttMessage msg) {
-    final MqttSubscribeAckMessage subAck = msg;
+    final subAck = msg as MqttSubscribeAckMessage;
     String topic;
     if (pendingSubscriptions
         .containsKey(subAck.variableHeader.messageIdentifier)) {
@@ -176,7 +176,7 @@ class SubscriptionsManager {
   /// Cleans up after an unsubscribe message is received from the broker.
   /// returns true, always
   bool confirmUnsubscribe(MqttMessage msg) {
-    final MqttUnsubscribeAckMessage unSubAck = msg;
+    final unSubAck = msg as MqttUnsubscribeAckMessage;
     final topic =
         pendingUnsubscriptions[unSubAck.variableHeader.messageIdentifier];
     subscriptions.remove(topic);

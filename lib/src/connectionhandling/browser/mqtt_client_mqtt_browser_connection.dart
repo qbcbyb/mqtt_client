@@ -8,12 +8,13 @@
 part of mqtt_browser_client;
 
 /// The MQTT browser connection base class
-class MqttBrowserConnection extends MqttConnectionBase {
+class MqttBrowserConnection extends MqttConnectionBase<WebSocketWrapper> {
   /// Default constructor
-  MqttBrowserConnection(var clientEventBus) : super(clientEventBus);
+  MqttBrowserConnection(events.EventBus clientEventBus) : super(clientEventBus);
 
   /// Initializes a new instance of the MqttBrowserConnection class.
-  MqttBrowserConnection.fromConnect(String server, int port, var clientEventBus)
+  MqttBrowserConnection.fromConnect(
+      String server, int port, events.EventBus clientEventBus)
       : super(clientEventBus) {
     connect(server, port);
   }
@@ -28,7 +29,7 @@ class MqttBrowserConnection extends MqttConnectionBase {
         onDone();
       });
       client.onMessage.listen((MessageEvent e) {
-        _onData(e.data);
+        _onData(e.data as ByteBuffer);
       });
       client.onError.listen((e) {
         MqttLogger.log(
@@ -42,7 +43,7 @@ class MqttBrowserConnection extends MqttConnectionBase {
   }
 
   /// OnData listener callback
-  void _onData(dynamic byteData) {
+  void _onData(ByteBuffer byteData) {
     MqttLogger.log('MqttBrowserConnection::_onData');
     // Protect against 0 bytes but should never happen.
     var data = Uint8List.view(byteData);
@@ -88,16 +89,14 @@ class MqttBrowserConnection extends MqttConnectionBase {
   }
 
   /// Sends the message in the stream to the broker.
+  @override
   void send(MqttByteBuffer message) {
-    final messageBytes = message.read(message.length);
-    var buffer = messageBytes.buffer;
-    var bData = ByteData.view(buffer);
-    client?.sendTypedData(bData);
+    client?.send(message);
   }
 
   void _disconnect() {
     if (client != null) {
-      client.close();
+      client.destroy();
       client = null;
     }
   }

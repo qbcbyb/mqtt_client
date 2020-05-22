@@ -53,7 +53,7 @@ class ChangeNotifier<C extends ChangeRecord> implements Observable<C> {
         changes = _queue;
         _queue = null;
       } else {
-        changes = ChangeRecord.any;
+        changes = ChangeRecord.any.cast<C>();
       }
       _scheduled = false;
       _changes.add(changes);

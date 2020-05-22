@@ -55,7 +55,7 @@ Future<int> main() async {
 
   // ignore: avoid_annotating_with_dynamic
   client.updates.listen((dynamic c) {
-    final MqttPublishMessage recMess = c[0].payload;
+    final recMess = c[0].payload as MqttPublishMessage;
     final pt =
         MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
     print(

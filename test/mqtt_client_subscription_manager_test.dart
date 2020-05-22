@@ -295,7 +295,7 @@ void main() {
         expect(c[0].topic, topic);
         print('Change notification:: topic is $topic');
         expect(c[0].payload, const TypeMatcher<MqttPublishMessage>());
-        final MqttPublishMessage recMess = c[0].payload;
+        final recMess = c[0].payload as MqttPublishMessage;
         if (recCount == 0) {
           expect(recMess.variableHeader.messageIdentifier, 1);
           final pt =

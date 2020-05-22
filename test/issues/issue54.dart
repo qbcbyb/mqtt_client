@@ -41,7 +41,7 @@ Future<int> main() async {
   client.subscribe(topic, MqttQos.atLeastOnce);
 
   client.updates.listen((List<MqttReceivedMessage<MqttMessage>> c) {
-    final MqttPublishMessage recMess = c[0].payload;
+    final recMess = c[0].payload as MqttPublishMessage;
     final pt =
         MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
     print(

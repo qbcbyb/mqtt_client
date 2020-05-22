@@ -8,7 +8,7 @@
 part of mqtt_server_client;
 
 /// The MQTT server connection class for the websocket interface
-class MqttServerWsConnection extends MqttServerConnection {
+class MqttServerWsConnection extends MqttServerConnection<WebSocket> {
   /// Default constructor
   MqttServerWsConnection(events.EventBus eventBus) : super(eventBus);
 
@@ -50,8 +50,8 @@ class MqttServerWsConnection extends MqttServerConnection {
       // Connect and save the socket.
       WebSocket.connect(uriString,
               protocols: protocols.isNotEmpty ? protocols : null)
-          .then((dynamic socket) {
-        client = socket;
+          .then((WebSocket socket) {
+        client = ServerSocketWrapper.newWebSocket(socket);
         readWrapper = ReadWrapper();
         messageStream = MqttByteBuffer(typed.Uint8Buffer());
         _startListening();
@@ -81,7 +81,7 @@ class MqttServerWsConnection extends MqttServerConnection {
 
   void _disconnect() {
     if (client != null) {
-      client.close();
+      client.destroy();
       client = null;
     }
   }

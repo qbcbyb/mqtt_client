@@ -106,7 +106,7 @@ class PublishingManager implements IPublishingManager {
   /// Handles the receipt of publish acknowledgement messages.
   /// This callback simply removes it from the list of published messages.
   bool handlePublishAcknowledgement(MqttMessage msg) {
-    final MqttPublishAckMessage ackMsg = msg;
+    final  ackMsg = msg as MqttPublishAckMessage;
     // If we're expecting an ack for the message, remove it from the list of pubs awaiting ack.
     if (publishedMessages.keys
         .contains(ackMsg.variableHeader.messageIdentifier)) {
@@ -117,7 +117,7 @@ class PublishingManager implements IPublishingManager {
 
   /// Handles the receipt of publish messages from a message broker.
   bool handlePublish(MqttMessage msg) {
-    final MqttPublishMessage pubMsg = msg;
+    final pubMsg = msg as MqttPublishMessage;
     var publishSuccess = true;
     try {
       final topic = PublicationTopic(pubMsg.variableHeader.topicName);
@@ -125,12 +125,12 @@ class PublishingManager implements IPublishingManager {
         // QOS AtMostOnce 0 require no response.
         // Send the message for processing to whoever is waiting.
         _clientEventBus.fire(MessageReceived(topic, msg));
-        _notifyPublish(msg);
+        _notifyPublish(pubMsg);
       } else if (pubMsg.header.qos == MqttQos.atLeastOnce) {
         // QOS AtLeastOnce 1 requires an acknowledgement
         // Send the message for processing to whoever is waiting.
         _clientEventBus.fire(MessageReceived(topic, msg));
-        _notifyPublish(msg);
+        _notifyPublish(pubMsg);
         final ackMsg = MqttPublishAckMessage()
             .withMessageIdentifier(pubMsg.variableHeader.messageIdentifier);
         connectionHandler.sendMessage(ackMsg);
@@ -155,7 +155,7 @@ class PublishingManager implements IPublishingManager {
 
   /// Handles the publish complete, for messages that are undergoing Qos ExactlyOnce processing.
   bool handlePublishRelease(MqttMessage msg) {
-    final MqttPublishReleaseMessage pubRelMsg = msg;
+    final pubRelMsg = msg as MqttPublishReleaseMessage;
     var publishSuccess = true;
     try {
       final pubMsg =
@@ -177,7 +177,7 @@ class PublishingManager implements IPublishingManager {
   /// Handles a publish complete message received from a broker.
   /// Returns true if the message flow completed successfully, otherwise false.
   bool handlePublishComplete(MqttMessage msg) {
-    final MqttPublishCompleteMessage compMsg = msg;
+    final compMsg = msg as MqttPublishCompleteMessage;
     final publishMessage =
         publishedMessages.remove(compMsg.variableHeader.messageIdentifier);
     if (publishMessage != null) {
@@ -190,7 +190,7 @@ class PublishingManager implements IPublishingManager {
   /// Handles publish received messages during processing of QOS level 2 (Exactly once) messages.
   /// Returns true or false, depending on the success of message processing.
   bool handlePublishReceived(MqttMessage msg) {
-    final MqttPublishReceivedMessage recvMsg = msg;
+    final recvMsg = msg as MqttPublishReceivedMessage;
     // If we've got a matching message, respond with a "ok release it for processing"
     if (publishedMessages
         .containsKey(recvMsg.variableHeader.messageIdentifier)) {

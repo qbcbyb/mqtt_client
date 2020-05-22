@@ -56,7 +56,7 @@ class TestConnectionHandlerNoSend extends MqttServerConnectionHandler {
 
   /// The security context for secure usage
   @override
-  dynamic securityContext;
+  SecurityContext securityContext;
 
   /// Successful connection callback
   @override

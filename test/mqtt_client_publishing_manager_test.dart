@@ -119,7 +119,7 @@ void main() {
           PublicationTopic('A/rawTopic'), MqttQos.atMostOnce, buff, true);
       expect(msgId, 1);
       expect(pm.publishedMessages.containsKey(1), isFalse);
-      final MqttPublishMessage pubMess = testCHS.sentMessages[0];
+      final pubMess = testCHS.sentMessages[0] as MqttPublishMessage;
       expect(pubMess.header.messageType, MqttMessageType.publish);
       expect(pubMess.variableHeader.messageIdentifier, 1);
       expect(pubMess.header.qos, MqttQos.atMostOnce);

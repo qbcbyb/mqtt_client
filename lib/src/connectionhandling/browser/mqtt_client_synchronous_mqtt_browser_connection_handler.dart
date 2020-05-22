@@ -10,9 +10,10 @@ part of mqtt_browser_client;
 /// Connection handler that performs connections and disconnections
 /// to the hostname in a synchronous manner.
 class SynchronousMqttBrowserConnectionHandler
-    extends MqttBrowserConnectionHandler {
+    extends MqttBrowserConnectionHandler<MqttBrowserWsConnection,
+        WebSocketWrapper> {
   /// Initializes a new instance of the MqttConnectionHandler class.
-  SynchronousMqttBrowserConnectionHandler(clientEventBus) {
+  SynchronousMqttBrowserConnectionHandler(events.EventBus clientEventBus) {
     this.clientEventBus = clientEventBus;
     clientEventBus.on<AutoReconnect>().listen(autoReconnect);
     registerForMessage(MqttMessageType.connectAck, connectAckProcessor);

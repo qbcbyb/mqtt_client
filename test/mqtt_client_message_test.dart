@@ -938,7 +938,7 @@ void main() {
       expect(baseMessage.header.qos, MqttQos.atMostOnce);
       expect(baseMessage.header.messageType, MqttMessageType.publish);
       expect(baseMessage.header.messageSize, 12);
-      final MqttPublishMessage pm = baseMessage;
+      final pm = baseMessage as MqttPublishMessage;
       // Check the payload
       expect(pm.payload.message[0], 'h'.codeUnitAt(0));
       expect(pm.payload.message[1], 'e'.codeUnitAt(0));
@@ -982,7 +982,7 @@ void main() {
       expect(baseMessage.header.qos, MqttQos.atMostOnce);
       expect(baseMessage.header.messageType, MqttMessageType.publish);
       expect(baseMessage.header.messageSize, 12);
-      final MqttPublishMessage pm = baseMessage;
+      final pm = baseMessage as MqttPublishMessage;
       // Check the payload
       expect(pm.payload.message[0], 'h'.codeUnitAt(0));
       expect(pm.payload.message[1], 'e'.codeUnitAt(0));

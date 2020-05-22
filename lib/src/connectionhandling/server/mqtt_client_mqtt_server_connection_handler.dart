@@ -9,7 +9,9 @@ part of mqtt_server_client;
 
 ///  This class provides specific connection functionality
 ///  for server based connections.
-abstract class MqttServerConnectionHandler extends MqttConnectionHandlerBase {
+abstract class MqttServerConnectionHandler<
+        T extends MqttConnectionBase<ServerSocketWrapper>>
+    extends MqttConnectionHandlerBase<T, ServerSocketWrapper> {
   /// Initializes a new instance of the [MqttServerConnectionHandler] class.
   MqttServerConnectionHandler();
 
@@ -32,5 +34,5 @@ abstract class MqttServerConnectionHandler extends MqttConnectionHandlerBase {
   bool secure = false;
 
   /// The security context for secure usage
-  dynamic securityContext;
+  SecurityContext securityContext;
 }

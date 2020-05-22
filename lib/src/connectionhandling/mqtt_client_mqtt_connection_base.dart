@@ -8,7 +8,7 @@
 part of mqtt_client;
 
 /// The MQTT client connection base class
-class MqttConnectionBase {
+abstract class MqttConnectionBase<T extends BaseConnection> {
   /// Default constructor
   MqttConnectionBase(this.clientEventBus);
 
@@ -19,7 +19,7 @@ class MqttConnectionBase {
 
   /// The socket that maintains the connection to the MQTT broker.
   @protected
-  dynamic client;
+  T client;
 
   /// The read wrapper
   @protected
@@ -30,7 +30,6 @@ class MqttConnectionBase {
   MqttByteBuffer messageStream;
 
   /// Unsolicited disconnection callback
-  @protected
   DisconnectCallback onDisconnected;
 
   /// The event bus
@@ -38,7 +37,6 @@ class MqttConnectionBase {
   events.EventBus clientEventBus;
 
   /// Connect, must be overridden in connection classes
-  @protected
   Future<void> connect(String server, int port) {
     final completer = Completer<void>();
     return completer.future;
@@ -82,4 +80,11 @@ class MqttConnectionBase {
       onDone();
     }
   }
+
+  void send(MqttByteBuffer message);
+}
+
+mixin BaseConnection {
+  void send(MqttByteBuffer message);
+  void destroy();
 }

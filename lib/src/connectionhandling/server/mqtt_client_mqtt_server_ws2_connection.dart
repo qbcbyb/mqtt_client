@@ -92,7 +92,7 @@ class _DetachedSocket extends Stream<Uint8List> implements Socket {
 }
 
 /// The MQTT server alternative websocket connection class
-class MqttServerWs2Connection extends MqttServerConnection {
+class MqttServerWs2Connection extends MqttServerConnection<WebSocket> {
   /// Default constructor
   MqttServerWs2Connection(this.context, events.EventBus eventBus)
       : super(eventBus);
@@ -110,7 +110,7 @@ class MqttServerWs2Connection extends MqttServerConnection {
   /// The security context for secure usage
   SecurityContext context;
 
-  StreamSubscription<dynamic> _subscription;
+  StreamSubscription<Uint8List> _subscription;
 
   /// Connect
   @override
@@ -143,9 +143,10 @@ class MqttServerWs2Connection extends MqttServerConnection {
           .then((Socket socket) {
         MqttLogger.log('MqttWs2Connection::connect - securing socket');
         _performWSHandshake(socket, uri).then((bool b) {
-          client = WebSocket.fromUpgradedSocket(
-              _DetachedSocket(socket, _subscription),
-              serverSide: false);
+          client = ServerSocketWrapper.newWebSocket(
+              WebSocket.fromUpgradedSocket(
+                  _DetachedSocket(socket, _subscription),
+                  serverSide: false));
           readWrapper = ReadWrapper();
           messageStream = MqttByteBuffer(typed.Uint8Buffer());
           MqttLogger.log('MqttWs2Connection::connect - start listening');

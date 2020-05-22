@@ -10,9 +10,9 @@ part of mqtt_server_client;
 /// Connection handler that performs server based connections and disconnections
 /// to the hostname in a synchronous manner.
 class SynchronousMqttServerConnectionHandler
-    extends MqttServerConnectionHandler {
+    extends MqttServerConnectionHandler<MqttServerConnection<dynamic>> {
   /// Initializes a new instance of the SynchronousMqttConnectionHandler class.
-  SynchronousMqttServerConnectionHandler(var clientEventBus) {
+  SynchronousMqttServerConnectionHandler(events.EventBus clientEventBus) {
     this.clientEventBus = clientEventBus;
     clientEventBus.on<AutoReconnect>().listen(autoReconnect);
     registerForMessage(MqttMessageType.connectAck, connectAckProcessor);
@@ -37,15 +37,16 @@ class SynchronousMqttServerConnectionHandler
           MqttLogger.log(
               'SynchronousMqttServerConnectionHandler::internalConnect - '
               'alternate websocket implementation selected');
-          connection = MqttServerWs2Connection(securityContext, clientEventBus);
+          connection = MqttServerWs2Connection(securityContext, clientEventBus)
+            ..protocols = websocketProtocols ??
+                MqttClientConstants.protocolsMultipleDefault;
         } else {
           MqttLogger.log(
               'SynchronousMqttServerConnectionHandler::internalConnect - '
               'websocket selected');
-          connection = MqttServerWsConnection(clientEventBus);
-        }
-        if (websocketProtocols != null) {
-          connection.protocols = websocketProtocols;
+          connection = MqttServerWsConnection(clientEventBus)
+            ..protocols = websocketProtocols ??
+                MqttClientConstants.protocolsMultipleDefault;
         }
       } else if (secure) {
         MqttLogger.log(

@@ -8,7 +8,7 @@
 part of mqtt_server_client;
 
 /// The MQTT server secure connection class
-class MqttServerSecureConnection extends MqttServerConnection {
+class MqttServerSecureConnection extends MqttServerConnection<SecureSocket> {
   /// Default constructor
   MqttServerSecureConnection(
       this.context, events.EventBus eventBus, this.onBadCertificate)
@@ -37,7 +37,7 @@ class MqttServerSecureConnection extends MqttServerConnection {
               onBadCertificate: onBadCertificate, context: context)
           .then((SecureSocket socket) {
         MqttLogger.log('MqttSecureConnection::connect - securing socket');
-        client = socket;
+        client = ServerSocketWrapper.newSocket<SecureSocket>(socket);
         readWrapper = ReadWrapper();
         messageStream = MqttByteBuffer(typed.Uint8Buffer());
         MqttLogger.log('MqttSecureConnection::connect - start listening');

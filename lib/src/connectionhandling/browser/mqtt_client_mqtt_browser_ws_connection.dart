@@ -7,6 +7,35 @@
 
 part of mqtt_browser_client;
 
+class WebSocketWrapper implements BaseConnection {
+  final WebSocket delegate;
+
+  WebSocketWrapper(String url, [Object protocols])
+      : delegate = WebSocket(url, protocols);
+
+  set binaryType(String value) {
+    delegate.binaryType = value;
+  }
+
+  Stream<Event> get onOpen => delegate.onOpen;
+  Stream<MessageEvent> get onMessage => delegate.onMessage;
+  Stream<Event> get onClose => delegate.onClose;
+  Stream<Event> get onError => delegate.onError;
+
+  @override
+  void destroy() {
+    delegate.close();
+  }
+
+  @override
+  void send(MqttByteBuffer message) {
+    final messageBytes = message.read(message.length);
+    var buffer = messageBytes.buffer;
+    var bData = ByteData.view(buffer);
+    delegate.sendTypedData(bData);
+  }
+}
+
 /// The MQTT connection class for the browser websocket interface
 class MqttBrowserWsConnection extends MqttBrowserConnection {
   /// Default constructor
@@ -49,11 +78,11 @@ class MqttBrowserWsConnection extends MqttBrowserConnection {
     MqttLogger.log('MqttBrowserWsConnection::connect -  WS URL is $uriString');
     try {
       // Connect and save the socket.
-      client = WebSocket(uriString, protocols);
+      client = WebSocketWrapper(uriString, protocols);
       client.binaryType = 'arraybuffer';
       messageStream = MqttByteBuffer(typed.Uint8Buffer());
-      var closeEvents;
-      var errorEvents;
+      StreamSubscription<Event> closeEvents;
+      StreamSubscription<Event> errorEvents;
       client.onOpen.listen((e) {
         MqttLogger.log('MqttBrowserWsConnection::connect - websocket is open');
         closeEvents.cancel();

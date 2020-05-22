@@ -40,11 +40,11 @@ class MessageReceived {
 /// Auto reconnect event
 class AutoReconnect {
   /// Constructor
-  AutoReconnect({userReconnect = false}) {
+  AutoReconnect({bool userReconnect = false}) {
     userRequested = userReconnect;
   }
 
   /// If set auto reconnect has been invoked through the client
   /// [doAutoReconnect] method, i.e. a user request.
-  var userRequested;
+  bool userRequested;
 }

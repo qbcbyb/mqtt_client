@@ -9,7 +9,8 @@ part of mqtt_client;
 
 ///  This class provides shared connection functionality
 ///  to serverand browser connection handler implementations.
-abstract class MqttConnectionHandlerBase implements IMqttConnectionHandler {
+abstract class MqttConnectionHandlerBase<T extends MqttConnectionBase<R>,
+    R extends BaseConnection> implements IMqttConnectionHandler {
   /// Initializes a new instance of the [MqttConnectionHandlerBase] class.
   MqttConnectionHandlerBase();
 
@@ -57,12 +58,11 @@ abstract class MqttConnectionHandlerBase implements IMqttConnectionHandler {
   events.EventBus clientEventBus;
 
   /// User supplied websocket protocols
-  @protected
   List<String> websocketProtocols;
 
   /// The connection
   @protected
-  dynamic connection;
+  T connection;
 
   /// Registry of message processors
   @protected
@@ -212,7 +212,7 @@ abstract class MqttConnectionHandlerBase implements IMqttConnectionHandler {
     MqttLogger.log(
         'SynchronousMqttServerConnectionHandler::_connectAckProcessor');
     try {
-      final MqttConnectAckMessage ackMsg = msg;
+      final ackMsg = msg as MqttConnectAckMessage;
       // Drop the connection if our connect request has been rejected.
       if (ackMsg.variableHeader.returnCode ==
               MqttConnectReturnCode.brokerUnavailable ||
