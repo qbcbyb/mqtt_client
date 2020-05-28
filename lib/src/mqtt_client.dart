@@ -15,6 +15,9 @@ typedef ConnectCallback = void Function();
 
 /// The client auto reconnect callback type
 typedef AutoReconnectCallback = void Function();
+typedef BeforeConnectCallback = Future<void> Function(
+    IMqttConnectionHandler connection,
+    MqttClientConnectionStatus connectionStatus);
 
 /// A client class for interacting with MQTT Data Packets.
 /// Do not instantiate this class directly, instead instantiate
@@ -137,6 +140,8 @@ class MqttClient<T extends MqttConnectionHandlerBase<R, S>,
   /// perform any pre auto reconnect actions.
   AutoReconnectCallback onAutoReconnect;
 
+  BeforeConnectCallback onBeforeConnect;
+
   /// Subscribed callback, function returns a void and takes a
   /// string parameter, the topic that has been subscribed to.
   SubscribeCallback _onSubscribed;
@@ -216,6 +221,7 @@ class MqttClient<T extends MqttConnectionHandlerBase<R, S>,
     connectionHandler.onDisconnected = internalDisconnect;
     connectionHandler.onConnected = internalConnected;
     connectionHandler.onAutoReconnect = onAutoReconnect;
+    connectionHandler.onBeforeConnect = onBeforeConnect;
     //
     publishingManager = PublishingManager(connectionHandler, clientEventBus);
     subscriptionsManager = SubscriptionsManager(

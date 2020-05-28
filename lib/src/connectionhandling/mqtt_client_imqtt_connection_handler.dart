@@ -24,6 +24,9 @@ abstract class IMqttConnectionHandler {
   /// Auto reconnect callback
   AutoReconnectCallback onAutoReconnect;
 
+  /// Before connect callback
+  BeforeConnectCallback onBeforeConnect;
+
   /// Auto reconnect in progress
   bool autoReconnectInProgress;
 

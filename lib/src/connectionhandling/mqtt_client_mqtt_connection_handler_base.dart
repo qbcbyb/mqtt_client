@@ -26,6 +26,10 @@ abstract class MqttConnectionHandlerBase<T extends MqttConnectionBase<R>,
   @override
   AutoReconnectCallback onAutoReconnect;
 
+  /// Before connect callback
+  @override
+  BeforeConnectCallback onBeforeConnect;
+
   /// Auto reconnect in progress
   @override
   bool autoReconnectInProgress = false;
@@ -88,6 +92,9 @@ abstract class MqttConnectionHandlerBase<T extends MqttConnectionBase<R>,
     // ignore: unnecessary_this
     this.connectionMessage = message;
     try {
+      if (onBeforeConnect != null) {
+        await onBeforeConnect(this, connectionStatus);
+      }
       await internalConnect(server, port, message);
       return connectionStatus;
     } on Exception {
@@ -121,6 +128,9 @@ abstract class MqttConnectionHandlerBase<T extends MqttConnectionBase<R>,
     while (connectionStatus.state != MqttConnectionState.connected) {
       MqttLogger.log(
           'MqttConnectionHandlerBase::autoReconnect - attempting reconnection');
+      if (onBeforeConnect != null) {
+        await onBeforeConnect(this, connectionStatus);
+      }
       await internalConnect(server, port, connectionMessage);
     }
     autoReconnectInProgress = false;
